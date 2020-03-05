@@ -1,0 +1,11 @@
+[Unit]
+Description=JupyterHub
+After=syslog.target network.target
+
+[Service]
+User={{ jupyterhub_service_user }}
+Environment="PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:{{ jupyterhub_venv_path }}/bin"
+ExecStart={{ jupyterhub_venv_path }}/bin/jupyterhub -f {{ jupyterhub_config_py }}
+
+[Install]
+WantedBy=multi-user.target

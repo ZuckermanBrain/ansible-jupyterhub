@@ -1,0 +1,9 @@
+jupyterhub_python_pkgs:
+    - epel-release
+    - python3-virtualenv
+    - python3-setuptools
+    - python3-pip
+
+jupyterhub_npm_prereq_pkgs:
+    - nodejs
+    - npm

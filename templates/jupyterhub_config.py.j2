@@ -1,0 +1,10 @@
+import yaml
+
+with open('{{ jupyterhub_config_yaml }}', 'r') as f:
+    jupyterhub_config = yaml.load(f)
+
+{% for handler in jupyterhub_config %}
+{% for option in jupyterhub_config[handler] %}
+c.{{ handler }}.{{ option }} = jupyterhub_config['{{ handler }}']['{{ option }}']
+{% endfor %}
+{% endfor %}

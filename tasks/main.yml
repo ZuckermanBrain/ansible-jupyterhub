@@ -1,2 +1,74 @@
 ---
 # tasks file for app-jupyterhub
+# Based off https://jupyterhub.readthedocs.io/en/stable/installation-guide-hard.html 
+- name: Resolve platform specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - '{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml'
+        - default.yml
+      skip: true
+      paths:
+        - '{{ role_path }}/vars'
+
+# Used by pip module
+- name: Install Python3 for use with pip module
+  package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ jupyterhub_python_pkgs }}"
+  when: jupyterhub_python_pkgs is defined
+
+# PyYAML is used for the config file, which is re-encoded
+# as YAML in this role and then imported into a Python script.
+- name: Install Jupyter PyPI packages into a virtualenv
+  pip:
+    name: "{{ item }}"
+    state: present
+    virtualenv: "{{ jupyterhub_venv_path }}"
+    virtualenv_python: python3
+  loop:
+    - pyyaml
+    - wheel
+    - jupyterhub
+    - jupyterlab
+    - ipywidgets
+
+# Used by npm module
+- name: Install npm
+  package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ jupyterhub_npm_prereq_pkgs }}"
+  when: jupyterhub_npm_prereq_pkgs is defined
+
+- name: Install "configurable-http-proxy" node.js package globally.
+  npm:
+    name: configurable-http-proxy
+    global: yes
+
+- name: Create the folder for the JupyterHub configuration
+  file:
+    path: "{{ jupyterhub_config_path }}"
+    state: directory
+
+- name: Create the config YAML file
+  copy:
+    content: "{{ jupyterhub_config | to_nice_yaml }}"
+    dest: "{{ jupyterhub_config_yaml }}"
+
+- name: Create the config Python file
+  template:
+    src: jupyterhub_config.py.j2
+    dest: "{{ jupyterhub_config_py }}"
+
+# I don't understand the advantage behind having this within the venv
+# directory and then symlinked in, so I'm just putting it directly amongst
+# the other unit files.
+- name: Create the systemd service
+  template:
+    src: jupyterhub.service.j2
+    dest: /etc/systemd/system/jupyterhub.service
+  notify:
+    - start and enable jupyterhub
+

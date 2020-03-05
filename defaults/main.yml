@@ -1,2 +1,132 @@
 ---
 # defaults file for app-jupyterhub
+jupyterhub_venv_path : "/opt/jupyterhub"
+jupyterhub_config_path : "/opt/jupyterhub/etc/jupyterhub"
+jupyterhub_config_yaml : "{{ jupyterhub_config_path }}/jupyter_config.yml"
+jupyterhub_config_py : "{{ jupyterhub_config_path }}/jupyter_config.py"
+
+jupyterhub_service_user : root
+
+jupyterhub_config:
+#  Application:
+#    log_datefmt : '%Y-%m-%d %H:%M:%S'
+#    log_format : '[%(name)s]%(highlevel)s %(message)s'
+#    log_level : 30
+  JupyterHub:
+#    active_server_limit : 0
+#    active_user_window : 1800
+#    activity_resolution : 30
+#    admin_access : False
+#    admin_users : !!set { }
+#    allow_named_servers : False
+#    answer_yes : False
+#    api_tokens : {}
+#    authenticate_prometheus : True
+#    authenticator_class : 'jupyterhub.auth.PAMAuthenticator'
+#    base_url : '/'
+    bind_url : 'http://:8000'
+#    cleanup_proxy : True
+#    cleanup_servers : True
+#    concurrent_spawn_limit : 100
+#    config_file : 'jupyterhub_config.py'
+#    confirm_no_ssl : False
+#    cookie_max_age_days : 14
+#    cookie_secret : b''
+#    cookie_secret_file : 'jupyterhub_cookie_secret'
+#    data_files_path : '/opt/jupyterhub/share/jupyterhub'
+#    db_kwargs : {}
+#    db_url : 'sqlite:///jupyterhub.sqlite'
+#    debug_db : False
+#    debug_proxy : False
+#    default_server_name : ''
+#    default_url : ''
+#    external_ssl_authorities : {}
+#    extra_handlers : []
+#    extra_log_file : ''
+#    extra_log_handlers : []
+#    generate_certs : False
+#    generate_config : False
+#    hub_bind_url : ''
+#    hub_connect_ip : ''
+#    hub_connect_port : 0
+#    hub_connect_url : ''
+#    hub_ip : '127.0.0.1'
+#    hub_port : 8081
+#    init_spawners_timeout : 10
+#    internal_certs_location : 'internal-ssl'
+#    internal_ssl : False
+#    ip : ''
+#    jinja_environment_options : {}
+#    last_activity_interval : 300
+#    load_groups : {}
+#    logo_file : ''
+#    named_server_limit_per_user : 0
+#    pid_file : ''
+#    port : 8000
+#    proxy_api_ip : ''
+#    proxy_api_port : 0
+#    proxy_auth_token : ''
+#    proxy_check_interval : 30
+#    proxy_class : 'jupyterhub.proxy.ConfigurableHTTPProxy'
+#    proxy_cmd : []
+#    recreate_internal_certs : False
+#    redirect_to_server : True
+#    reset_db : False
+#    service_check_interval : 60
+#    service_tokens : {}
+#    services : []
+#    shutdown_on_logout : False
+#    spawner_class : 'jupyterhub.spawner.LocalProcessSpawner'
+#    ssl_cert : ''
+#    ssl_key : ''
+#    statsd_host : ''
+#    statsd_port : 8125
+#    statsd_prefix : 'jupyterhub'
+#    subdomain_host : ''
+#    template_paths : []
+#    template_vars : {}
+#    tornado_settings : {}
+#    trust_user_provided_tokens : False
+#    trusted_alt_names : []
+#    trusted_downstream_ips : []
+#    upgrade_db : False
+#    user_redirect_hook : None
+  Spawner:
+#    args : []
+#    auth_state_hook : None
+#    cmd : ['jupyterhub-singleuser']
+#    consecutive_failure_limit : 0
+#    cpu_guarantee : None
+#    cpu_limit : None
+#    debug : False
+    default_url: '/lab'
+#    disable_user_config : False
+#    env_keep : ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL']
+#    environment : {}
+#    http_timeout : 30
+#    ip : ''
+#    mem_guarantee : None
+#    mem_limit : None
+#    notebook_dir : ''
+#    options_form : traitlets.Undefined
+#    poll_interval : 30
+#    port : 0
+#    post_stop_hook : None
+#    pre_spawn_hook : None
+#    ssl_alt_names : []
+#    ssl_alt_names_include_local : True
+#    start_timeout : 60
+#  Authenticator:
+#    admin_users : !!set { }
+#    auth_refresh_age : 300
+#    auto_login : False
+#    blacklist : !!set { }
+#    enable_auth_state : False
+#    post_auth_hook : None
+#    refresh_pre_spawn : False
+#    username_map : {}
+#    username_pattern : ''
+#    whitelist : !!set { }
+#  CryptKeeper:
+#    keys : []
+#    n_threads : 1
