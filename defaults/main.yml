@@ -130,3 +130,6 @@ jupyterhub_config:
 #  CryptKeeper:
 #    keys : []
 #    n_threads : 1
+
+# Variable to import/register custom spawners
+# jupyterhub_spawners: []

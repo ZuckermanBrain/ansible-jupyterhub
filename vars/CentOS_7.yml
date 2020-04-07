@@ -3,6 +3,7 @@ jupyterhub_python_pkgs:
     - python3-virtualenv
     - python3-setuptools
     - python3-pip
+    - python-setuptools
 
 jupyterhub_npm_prereq_pkgs:
     - nodejs

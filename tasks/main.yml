@@ -27,12 +27,23 @@
     state: present
     virtualenv: "{{ jupyterhub_venv_path }}"
     virtualenv_python: python3
+    virtualenv_command: virtualenv-3
   loop:
     - pyyaml
     - wheel
     - jupyterhub
     - jupyterlab
     - ipywidgets
+
+- name: Install custom spawners
+  pip:
+    name: "{{ item }}"
+    state: present
+    virtualenv: "{{ jupyterhub_venv_path }}"
+    virtualenv_python: python3
+    virtualenv_command: virtualenv-3
+  loop: "{{ jupyterhub_spawners }}"
+  when: jupyterhub_spawners is defined
 
 # Used by npm module
 - name: Install npm

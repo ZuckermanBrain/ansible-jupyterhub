@@ -1,4 +1,9 @@
 import yaml
+{% if jupyterhub_spawners is defined %}
+{% for spawner in juypterhub_spawners %}
+import {{ spawner }}
+{% endfor %}
+{% endif %}
 
 with open('{{ jupyterhub_config_yaml }}', 'r') as f:
     jupyterhub_config = yaml.load(f)

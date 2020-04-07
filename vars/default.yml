@@ -1,0 +1,4 @@
+pip_prereq_pkgs:
+    - python-virtualenv
+    - python-setuptools
+    - python-pip
