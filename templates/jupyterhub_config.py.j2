@@ -1,6 +1,6 @@
 import yaml
 {% if jupyterhub_spawners is defined %}
-{% for spawner in juypterhub_spawners %}
+{% for spawner in jupyterhub_spawners %}
 import {{ spawner }}
 {% endfor %}
 {% endif %}
