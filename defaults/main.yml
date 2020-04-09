@@ -133,3 +133,5 @@ jupyterhub_config:
 
 # Variable to import/register custom spawners
 # jupyterhub_spawners: []
+# jupyterhub_batchspawner_commands:"/bin/sbatch,/bin/squeue,/bin/scancel"
+

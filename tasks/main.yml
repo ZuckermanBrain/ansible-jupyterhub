@@ -19,6 +19,30 @@
   loop: "{{ jupyterhub_python_pkgs }}"
   when: jupyterhub_python_pkgs is defined
 
+- name: Create a JupyterHub service user.
+  user:
+    name: "{{ jupyterhub_service_user }}"
+    home: /opt/jupyterhub
+    shell: /sbin/nologin
+  when: jupyterhub_service_user != "root"
+
+- name: Allow the Jupyterhub service user to run batch submit/cancel/queue status as anyone
+  copy: 
+    content: |
+      {{ jupyterhub_service_user }} ALL=(%jupyterhub) NOPASSWD:SETENV:{{ jupyterhub_batchspawner_commands }}
+    dest: /etc/sudoers.d/jupyterhub
+    validate: 'visudo -cf %s'
+    mode: 0440
+  when: '"batchspawner" in jupyterhub_spawners'
+
+- name: Ensure that the JupyterHub venv is owned by the service user and accessible to all
+  file:
+    path: "{{ jupyterhub_venv_path }}"
+    owner: "{{ jupyterhub_service_user }}"
+    group: "{{ jupyterhub_service_user }}"
+    mode: '0775'
+    state: directory
+
 # PyYAML is used for the config file, which is re-encoded
 # as YAML in this role and then imported into a Python script.
 - name: Install Jupyter PyPI packages into a virtualenv
@@ -32,20 +56,18 @@
     - pyyaml
     - wheel
     - jupyterhub
-    - jupyterlab
+# Version 2 necessary for the Jupyter SLURM module
+    - jupyterlab==1.2.8
     - ipywidgets
-
-- name: Install custom spawners
-  pip:
-    name: "{{ item }}"
-    state: present
-    virtualenv: "{{ jupyterhub_venv_path }}"
-    virtualenv_python: python3
-    virtualenv_command: virtualenv-3
-  loop: "{{ jupyterhub_spawners }}"
-  when: jupyterhub_spawners is defined
+  become_user: "{{ jupyterhub_service_user }}"
 
 # Used by npm module
+- name: Install nodejs repo
+  package:
+    name: "{{ jupyterhub_npm_prereq_repo }}"
+    state: present
+  when: jupyterhub_npm_prereq_repo is defined
+
 - name: Install npm
   package:
     name: "{{ item }}"
@@ -58,20 +80,62 @@
     name: configurable-http-proxy
     global: yes
 
+- name: Install custom spawners
+  pip:
+    name: "{{ item }}"
+    state: present
+    virtualenv: "{{ jupyterhub_venv_path }}"
+    virtualenv_python: python3
+    virtualenv_command: virtualenv-3
+  loop: "{{ jupyterhub_spawners }}"
+  when: jupyterhub_spawners is defined
+  become_user: "{{ jupyterhub_service_user }}"
+
+- name: Install custom authenticators
+  pip:
+    name: "{{ item }}"
+    state: present
+    virtualenv: "{{ jupyterhub_venv_path }}"
+    virtualenv_python: python3
+    virtualenv_command: virtualenv-3
+  loop: "{{ jupyterhub_authenticators }}"
+  when: jupyterhub_authenticators is defined
+  become_user: "{{ jupyterhub_service_user }}"
+
+- name: Install custom Jupyterlab extensions with pip
+  pip:
+    name: "{{ item }}"
+    state: present
+    virtualenv: "{{ jupyterhub_venv_path }}"
+    virtualenv_python: python3
+    virtualenv_command: virtualenv-3
+  loop: "{{ jupyterhub_pip_extensions }}"
+  when: jupyterhub_pip_extensions is defined
+  become_user: "{{ jupyterhub_service_user }}"
+
+- name: Install custom Jupyterlab extensions with jupyter labextension
+  command: "{{ jupyterhub_venv_path }}/bin/jupyter labextension install {{ item }}"
+  loop: "{{ jupyterhub_labextension_extensions }}"
+  when: jupyterhub_labextension_extensions is defined
+  become_user: "{{ jupyterhub_service_user }}"
+
 - name: Create the folder for the JupyterHub configuration
   file:
     path: "{{ jupyterhub_config_path }}"
     state: directory
+  become_user: "{{ jupyterhub_service_user }}"
 
 - name: Create the config YAML file
   copy:
     content: "{{ jupyterhub_config | to_nice_yaml }}"
     dest: "{{ jupyterhub_config_yaml }}"
+  become_user: "{{ jupyterhub_service_user }}"
 
 - name: Create the config Python file
   template:
     src: jupyterhub_config.py.j2
     dest: "{{ jupyterhub_config_py }}"
+  become_user: "{{ jupyterhub_service_user }}"
 
 # I don't understand the advantage behind having this within the venv
 # directory and then symlinked in, so I'm just putting it directly amongst

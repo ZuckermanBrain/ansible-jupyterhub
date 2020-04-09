@@ -7,4 +7,5 @@ jupyterhub_python_pkgs:
 
 jupyterhub_npm_prereq_pkgs:
     - nodejs
-    - npm
+
+jupyterhub_npm_prereq_repo: "https://rpm.nodesource.com/pub_10.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm"
