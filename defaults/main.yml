@@ -18,6 +18,7 @@ jupyterhub_config_yaml : "{{ jupyterhub_config_path }}/jupyter_config.yml"
 jupyterhub_config_py : "{{ jupyterhub_config_path }}/jupyter_config.py"
 
 jupyterhub_service_user : root
+jupyterhub_group: "{{ jupyterhub_service_user }}"
 
 jupyterhub_config:
 #  Application:

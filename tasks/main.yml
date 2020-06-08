@@ -38,14 +38,36 @@
     shell: /sbin/nologin
   when: jupyterhub_service_user != "root"
 
+- name: Ensure that JupyterHub group exists
+  group:
+    name: "{{ jupyterhub_group }}"
+    state: present
+  when: jupyterhub_service_user != "root"
+
+- name: Ensure that the service user is a member of the JupyterHub group
+  user:
+    name: "{{ jupyterhub_service_user }}"
+    groups: "{{ jupyterhub_group }}"
+    append: yes
+  when: jupyterhub_service_user != "root"
+
 - name: Allow the Jupyterhub service user to run batch submit/cancel/queue status as anyone
   copy: 
     content: |
-      {{ jupyterhub_service_user }} ALL=(%jupyterhub) NOPASSWD:SETENV:{{ jupyterhub_batchspawner_commands }}
-    dest: /etc/sudoers.d/jupyterhub
+      {{ jupyterhub_service_user }} ALL=(%{{ jupyterhub_group }}) NOPASSWD:SETENV:{{ jupyterhub_batchspawner_commands }}
+    dest: /etc/sudoers.d/jupyterhub-batchspawner
     validate: 'visudo -cf %s'
     mode: 0440
-  when: '"batchspawner" in jupyterhub_spawners'
+  when: '"batchspawner" in jupyterhub_spawners and jupyterhub_service_user != "root"'
+
+- name: Allow the Jupyterhub service user to run as anyone
+  copy: 
+    content: |
+      {{ jupyterhub_service_user }} ALL=(%{{ jupyterhub_group }}) NOPASSWD:{{ jupyterhub_venv_path }}/bin/sudospawner
+    dest: /etc/sudoers.d/jupyterhub-sudospawner
+    validate: 'visudo -cf %s'
+    mode: 0440
+  when: '"sudospawner" in jupyterhub_spawners and jupyterhub_service_user != "root"'
 
 - name: Ensure that the JupyterHub venv is owned by the service user and accessible to all
   file:
@@ -114,7 +136,7 @@
   when: jupyterhub_authenticators is defined
   become_user: "{{ jupyterhub_service_user }}"
 
-- name: Install custom Jupyterlab extensions with pip
+- name: Install custom JupyterLab extensions with pip
   pip:
     name: "{{ item }}"
     state: present
