@@ -14,11 +14,14 @@
 # defaults file for app-jupyterhub
 jupyterhub_venv_path : "/opt/jupyterhub"
 jupyterhub_config_path : "/opt/jupyterhub/etc/jupyterhub"
-jupyterhub_config_yaml : "{{ jupyterhub_config_path }}/jupyter_config.yml"
-jupyterhub_config_py : "{{ jupyterhub_config_path }}/jupyter_config.py"
+jupyterhub_config_yaml : "{{ jupyterhub_config_path }}/jupyterhub_config.yml"
+jupyterhub_config_py : "{{ jupyterhub_config_path }}/jupyterhub_config.py"
 
 jupyterhub_service_user : root
 jupyterhub_group: "{{ jupyterhub_service_user }}"
+
+# Path to custom Python code to be embedded into the JupyterHub config file.
+# jupyterhub_custom_code: ''
 
 jupyterhub_config:
 #  Application:
@@ -148,3 +151,10 @@ jupyterhub_config:
 # jupyterhub_spawners: []
 # jupyterhub_batchspawner_commands:"/bin/sbatch,/bin/squeue,/bin/scancel"
 
+# Variable to install custom authenticators.
+# jupyterhub_authenticators: []
+
+# List of pip-installable JupyterLab extensions
+# jupyterhub_pip_extensions: []
+# List of extension names to be registered with JupyterLab
+# jupyterhub_labextension_extensions: []
