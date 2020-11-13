@@ -5,6 +5,10 @@ import {{ spawner }}
 {% endfor %}
 {% endif %}
 
+{% if jupyterhub_custom_code is defined %}
+{{ lookup('file', jupyterhub_custom_code) }}
+{% endif %}
+
 with open('{{ jupyterhub_config_yaml }}', 'r') as f:
     jupyterhub_config = yaml.load(f)
 

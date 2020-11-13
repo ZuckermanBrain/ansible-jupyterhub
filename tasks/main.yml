@@ -57,8 +57,7 @@
       {{ jupyterhub_service_user }} ALL=(%{{ jupyterhub_group }}) NOPASSWD:SETENV:{{ jupyterhub_batchspawner_commands }}
     dest: /etc/sudoers.d/jupyterhub-batchspawner
     validate: 'visudo -cf %s'
-    mode: 0440
-  when: '"batchspawner" in jupyterhub_spawners and jupyterhub_service_user != "root"'
+    mode: 0440 when: '"batchspawner" in jupyterhub_spawners and jupyterhub_service_user != "root"'
 
 - name: Allow the Jupyterhub service user to run as anyone
   copy: 
@@ -157,6 +156,17 @@
   file:
     path: "{{ jupyterhub_config_path }}"
     state: directory
+  become_user: "{{ jupyterhub_service_user }}"
+
+- name: Install dependencies for custom code in the Jupyter config
+  pip:
+    name: "{{ item }}"
+    state: present
+    virtualenv: "{{ jupyterhub_venv_path }}"
+    virtualenv_python: python3
+    virtualenv_command: virtualenv-3
+  loop: "{{ jupyterhub_custom_code_deps }}"
+  when: jupyterhub_custom_code is defined and jupyterhub_custom_code_deps is defined
   become_user: "{{ jupyterhub_service_user }}"
 
 - name: Create the config YAML file
