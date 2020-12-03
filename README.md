@@ -15,13 +15,21 @@ SSL certificates and a reverse proxy are not installed by this role and must be 
 Role Variables
 --------------
 `jupyterhub_venv_path` (string) : A path to where the Python virtualenv that JupyterHub is installed into should live.
+
 `jupyterhub_config` (dict) : A dictionary that maps isomorphically to the configuration dictated in the JupyterHub `.py` configuration file.
+
 `jupyterhub_config_yaml` (string) : A path where a YAML file generated from `jupyterhub_config_py` should live.
+
 `jupyterhub_config_py` (string) : The path to where JupyterHub's `.py` config file should live.  Note that in this configuration, all that the `.py` does is load the YAML file and then populate configuration variables with entries in the dictionary defined in the file at `jupyterhub_config_yaml`.
+
 `jupyterhub_config_path` (string) : The path to where JupyterHub's `.py` and `.yaml` config files should live.
+
 `jupyterhub_service_user` (string) : A service user that should run JupyterHub.
+
 `jupyterhub_group` (string) : The group that JupyterHub users should belong to.
+
 `jupyterhub_spawners` (list) : The JupyterHub spawners to install.
+
 `jupyterhub_batchspawner_commands` (string; not applicable if `batchspawner` not installed) : A comma-separated list with the full paths to batch scheduler commands that the SLURM `batchspawner` should be able to run.
 
 Dependencies
